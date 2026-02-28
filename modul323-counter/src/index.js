@@ -1,6 +1,8 @@
-import hh from "hyperscript-helpers";
-import { h, diff, patch } from "virtual-dom";
-import createElement from "virtual-dom/create-element";
+const hh = require("hyperscript-helpers");
+const h = require("virtual-dom/h");
+const diff = require("virtual-dom/diff");
+const patch = require("virtual-dom/patch");
+const createElement = require("virtual-dom/create-element");
 
 const { div, button } = hh(h);
 
@@ -27,19 +29,20 @@ function update(msg, model) {
     case MSGS.SUBTRACT:
       return { ...model, counter: model.counter - 1 };
     default:
-      return {...model};
+      return { ...model };
   }
 }
 
 // impure code below (not avoidable but controllable)
-function app(initModel, update, view, node) {
+function app(initModel, updateFn, viewFn, node) {
   let model = initModel;
-  let currentView = view(dispatch, model);
+  let currentView = viewFn(dispatch, model);
   let rootNode = createElement(currentView);
   node.appendChild(rootNode);
+
   function dispatch(msg) {
-    model = update(msg, model);
-    const updatedView = view(dispatch, model);
+    model = updateFn(msg, model);
+    const updatedView = viewFn(dispatch, model);
     const patches = diff(currentView, updatedView);
     rootNode = patch(rootNode, patches);
     currentView = updatedView;
@@ -52,3 +55,5 @@ const initModel = {
 
 const rootNode = document.getElementById("app");
 app(initModel, update, view, rootNode);
+
+module.exports = { MSGS, view, update, app, initModel };
