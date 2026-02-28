@@ -1,0 +1,18 @@
+function sum(a, b) {
+  return a + b;
+}
+
+function subtract(a, b) {
+  return a - b;
+}
+
+function multiply(a, b) {
+  return a * b;
+}
+
+function divide(a, b) {
+  if (b === 0) throw new Error("Division durch 0 ist nicht erlaubt");
+  return a / b;
+}
+
+module.exports = { sum, subtract, multiply, divide };
